@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Simulation_E5</title>
+        <style>
+            canvas{
+                float:right;
+            }
+            @font-face {
+                font-family: iransans_regular;
+                src: url(iransans_regular.ttf);
+            }
+            body{
+                font-family: iransans_regular;
+            }
+            div.main{
+                height:40px;
+                width:25%;
+                float:left;
+                margin-left:11%;
+                border:0px solid red;
+            }
+            div.inner1{
+                height:100%;
+                width:48%;
+                float: left;
+                border:0px solid blue;
+            }
+            div.inner2{
+                height:100%;
+                width:48%;
+                float:right;
+                border:0px solid green;
+            }
+
+            button{
+                height:60px;
+                width:90px;
+                color:white;
+                border:0px;
+                margin-left:14%;
+                font-weight:bold;
+                font-size:18px;
+                border-radius: 10px;
+                outline:none;
+                background: linear-gradient(30deg,rgba(183,222,237,1) ,#0FB2EE 25%, #0EAAEC 45%, rgba(183,222,237,1) 100%);
+            }
+            
+            button:hover{
+                background: linear-gradient(30deg,rgb(153, 226, 255) ,rgb(220, 246, 255) 25%, rgb(89, 205, 255) 45%, rgb(0, 140, 195) 100%);
+            }
+            input , .cinput{
+                
+                margin-top:5px;
+                background-color:white;
+                border:1px solid grey;                
+                height:30px;
+                width:150px;        
+                font-size:25px;
+                color:rgb(1, 151, 206);
+                border-radius:6px;
+                outline:none;
+                font-family: iransans_regular;
+            }
+            input:focus{
+                background-color:rgb(245, 238, 238);
+            } 
+            input::placeholder{
+                font-size:15px;
+                font-family: iransans_regular;
+            }
+            .winput{
+                border:1.1px solid red;   
+                background-color: #FAFF93;
+                transition: background-color 2s , border 1s;
+            }
+            table ,td{
+                border-collapse: collapse;
+                text-align:center;
+            }
+            th,td{
+                padding-top:3px;
+            }
+            table{
+                width:33%;
+                float:left;
+                margin-left:20px;
+            }
+            caption{
+                color:#251AB0;
+                font:25px  iransans_regular; 
+                margin-top:10px;
+                margin-bottom:10px;
+                border: 1px solid  rgb(190, 189, 189);
+                border-radius:10px; 
+            }
+            tr:nth-child(n+2){
+                border-bottom:2px solid rgb(190, 189, 189);
+            }            
+            tr:nth-child(2n+2) {
+                background:#F3F3F3;    
+            }
+            tr:nth-child(2n+3) {
+                background:rgb(224, 222, 222);
+            }
+            tr:nth-child(n+2):hover {
+                background:rgb(7, 0, 0);
+                color:white;  
+            }     
+            
+            th:first-child{
+                border-top-left-radius:20px;
+            }            
+            th:nth-child(6){
+                border-top-right-radius:20px;
+            }
+            th{
+                background-color:rgb(153, 226, 255);
+            }
+            tr:last-child td:nth-child(1){
+                border-width:0px 1px 0px 1px;
+                border-style:dashed ;
+                border-color: rgb(167, 163, 163);
+                color:red;
+            }
+            tr:last-child{
+                border:0;
+                background-color:rgb(153, 226, 255);
+            }
+            tr:nth-last-child(2){
+                border-bottom:1px solid black;
+               
+            }
+            tr:last-child td:first-child{
+                border-bottom-left-radius:10px;                
+            }
+            tr:last-child td:last-child{
+                border-bottom-right-radius:10px;                
+            }
+
+            #talkbubbleleft  {   
+                margin-left:10px;
+                color:white;
+                direction: rtl;
+                margin-top:5px;             
+                width: 150px;
+                height: 32px;
+                background: black;
+                position: relative;
+                border-radius: 10px;
+                opacity:0;                
+                text-align: center;
+            }
+            
+            #talkbubbleleft:before {
+                
+                content: "";
+                position: absolute;
+                right: 98.5%;
+                top: 3px;
+                width: 0;
+                height: 0;
+                border-top: 13px solid transparent;
+                border-right: 13px solid black;
+                border-bottom: 13px solid transparent;
+            }
+
+            @keyframes example {
+                0%   {opacity:0;}                
+                50%   {opacity:1;}                
+                100% {opacity:0;}
+            }
+        </style>        
+    </head>
+    <body>
+        <button onclick="f1()">Click ME!</button><br>
+        <div class="main">
+            
+            <div class="inner1">
+                <input type="text" id="userInput" placeholder="تعداد دور ها را وارد کنید" required>
+            </div>
+            <div class="inner2">
+                <div id="talkbubbleleft">عدد صحیح نیست.</div>
+            </div>
+        </div>
+        <br><br>
+
+
+        <table id ="table1">
+            <caption>شبیه سازی مثال بمباران </caption>
+            <tr>
+                <th>نتیجه الف</th>
+                <th>600*RNNy</th>
+                <th>RNNy</th>
+                <th>600*RNNx</th>
+                <th>RNNx</th>
+                <th>بمب افکن</th>
+            </tr>
+        </table>
+        <canvas id="cvs" width="670px"  height="570px" style="border:1px solid #DFDFDF"></cancas>
+            
+        <script>        
+            function f1() {
+                var rd_hor =[""];
+                var rd_ver =[""]; 
+                var m_hor =[""];
+                var m_ver =[""]; 
+                var esabat =[""];
+                var esabat_all = 0 ;
+                var body_table = "";
+                var all_table = "";
+                var index = 0;
+                var value = document.getElementById('userInput').value;
+
+                if((!value) | isNaN(value) | value == 0 | value < 0){
+                    document.getElementById('userInput').className ="winput"; 
+                    document.getElementById("talkbubbleleft").style.animation = "example 3s infinite";
+                }
+                else{
+                    document.getElementById("talkbubbleleft").style.animation = "";
+                    document.getElementById('userInput').className ="cinput"; 
+                }
+
+                for (i = 1; i <= value; i++){
+                    rd_hor[i] = -1.5 + Math.random() * 3;
+                    rd_ver[i] = -1.5 + Math.random() * 3;
+                    rd_hor[i] = rd_hor[i].toFixed(2);
+                    rd_ver[i] = rd_ver[i].toFixed(2);
+                    m_hor[i]=Math.floor(600 * rd_hor[i]);
+                    m_ver[i]=Math.floor(600 * rd_ver[i]);
+
+                    
+                    esabat[i] = "خیر";
+                    if(m_hor[i] <=350 & m_hor[i]>=0 & m_ver[i]<=0 & m_ver[i]>=-550 ){
+                        esabat[i] = "بله"; //مستطیل بالا
+                        esabat_all++;
+                        index = 1;
+                        var c=document.getElementById("cvs");
+                        var context=c.getContext("2d");
+                        context.beginPath();                       
+                        context.fillStyle = "red";
+                        context.fillText("()", 230+m_hor[i]/2.7, -m_ver[i]/2);
+                        context.stroke();
+                    }
+
+                    if(m_hor[i]>=0 & m_hor[i]<=200 & m_ver[i]>=0 & m_ver[i]<=400){
+                        esabat[i] = "بله"; //مستطیل پایین
+                        esabat_all++;
+                        index = 1;
+                    }
+
+                    for(j = 0 ; j<=400 ; j++){
+                        if(m_hor[i]>=200 & m_hor[i]<=600-j & m_ver[i]==j){
+                            esabat[i] = "بله"; //مثلث راست پایین"
+                            esabat_all++;
+                            index = 1;
+                        }
+                    }
+
+                    if(m_hor[i]>=350 & m_hor[i]<=500 & m_ver[i]<=0 & m_ver[i]>=-150){
+                        esabat[i] = "بله"; //مستطیل راست
+                        esabat_all++;
+                        index = 1;
+                    }
+
+                    for(k = 0 ; k<=250 ; k++){                            
+                        if(m_hor[i]>=500 & m_hor[i]<=750-k & m_ver[i]==-k){
+                            esabat[i] = "بله"; //مثلث راست
+                            esabat_all++;
+                            index = 1;
+                        }
+                    }
+
+                    if(m_hor[i]<=0 & m_hor[i]>=-100 & m_ver[i]>=0 & m_ver[i]<=400){
+                        esabat[i] = "بله"; //مستطیل چپ پایین
+                        esabat_all++;
+                        index = 1;
+                    }
+
+                    for(l = 0 ; l<=400 ; l++){                            
+                        if(m_hor[i]<=-100 & m_hor[i]>=-500+l & m_ver[i]==l){
+                            esabat[i] = "بله"; //مثلث چپ پایین
+                            esabat_all++;
+                            index = 1;
+                        }
+                    }
+
+                    for(m = 0 ; m<=500 ; m++){
+                        n=1.1*m;                            
+                        if(m_hor[i]<=0 & m_hor[i]>=-500+m & m_ver[i]==-n){
+                            esabat[i] = "بله"; //مثلث چپ بالا
+                            esabat_all++;
+                            index = 1;
+                        }
+                    }
+
+                    var header_table = "<caption>شبیه سازی مثال بمباران</caption><tr><th>نتیجه الف</th><th>600*RNNy</th><th>RNNy</th><th>600*RNNx</th><th>RNNx</th><th>بمب افکن</th></tr>";
+                    var row_col_table;
+                    var footer_table;
+                    row_col_table = "<tr><td>"
+                    + esabat[i]  + "</td><td>"
+                    + m_ver[i]  + "</td><td>"
+                    + rd_ver[i]  + "</td><td>"
+                    + m_hor[i]  + "</td><td>"
+                    + rd_hor[i]  + "</td><td>"
+                    + i  + "</td></tr>";
+                    
+                    body_table = body_table + row_col_table ;                    
+                    footer_table ="<tr><td >" + esabat_all +"</td><td colspan='4'></td><td >مجموع</td></tr>";
+                    all_table= header_table + body_table + footer_table;
+                    document.getElementById("table1").innerHTML = all_table; 
+                }
+            }
+            var c=document.getElementById("cvs");
+            var context=c.getContext("2d");
+            context.beginPath();
+            context.strokeStyle= "black";
+            context.lineWidth = 1;
+            context.moveTo(10,280);
+            context.lineTo(175,474);
+            context.lineTo(320,474);
+            context.lineTo(600,150);
+            context.lineTo(400,150);
+            context.lineTo(400,20);
+            context.lineTo(230,20);
+            context.lineTo(10,280);
+            context.stroke();
+            //950 meter
+            context.beginPath();
+            context.strokeStyle= "green";
+            context.font = "15px Arial";
+            context.fillStyle = "green";
+            context.fillText("950 Meter", 595, 257);
+            //context.setLineDash([0, 0]);   dash or dott or 
+            context.moveTo(630,20);
+            context.lineTo(630,230);
+            context.moveTo(630,275);
+            context.lineTo(630,475);
+            context.moveTo(615,20);
+            context.lineTo(645,20);
+            context.moveTo(615,475);
+            context.lineTo(645,475);
+            context.stroke();
+
+            //1250 meter
+            context.beginPath();
+            context.strokeStyle= "red";
+            context.font = "15px Arial";
+            context.fillStyle = "red";
+            context.fillText("1250 Meter", 256, 555);
+            context.moveTo(20,550);
+            context.lineTo(250,550);
+            context.moveTo(340,550);
+            context.lineTo(600,550);
+            context.moveTo(20,536);  //amodi chap
+            context.lineTo(20,565);  //amodi chap
+            context.moveTo(600,500); //amodi rast
+            context.lineTo(600,565); //amodi rast
+            context.stroke();
+            
+            //400 meter
+            context.beginPath();
+            context.strokeStyle= "blue";
+            context.font = "15px Arial";
+            context.fillStyle = "blue";
+            context.fillText("400 Meter", 505, 380);
+            context.moveTo(540,280);
+            context.lineTo(540,355);
+            context.moveTo(540,395);
+            context.lineTo(540,475);
+            context.moveTo(525,280);//ofoghi bala
+            context.lineTo(555,280);//ofoghi bala
+            context.moveTo(525,475);//ofoghi payin
+            context.lineTo(555,475);//ofoghi payin
+            context.stroke();
+
+            //500 meter
+            context.beginPath();
+            context.strokeStyle= "#C709E1";
+            context.font = "15px Arial";
+            context.fillStyle = "#C709E1";
+            context.fillText("500 Meter", 90, 525);
+            context.moveTo(20,520);
+            context.lineTo(85,520);
+            context.moveTo(160,520);
+            context.lineTo(230,520);
+            context.moveTo(230,505); //amodi rast
+            context.lineTo(230,535); //amodi rast
+            context.moveTo(20,505);  //amodi chap
+            context.lineTo(20,535);  //amodi chap
+            context.stroke();
+
+            // noghtechin amoodi
+            context.beginPath();
+            context.strokeStyle= "black";
+            context.setLineDash([5, 8]);
+            context.moveTo(230,20);
+            context.lineTo(230,504);
+            context.stroke();
+
+            // noghtechin ofoghi
+            context.beginPath();
+            context.strokeStyle= "black";
+            context.setLineDash([5, 8]);
+            context.moveTo(10,280);
+            context.lineTo(522,280);
+            context.stroke();
+
+        </script>        
+    </body>
+</html>
